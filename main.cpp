@@ -1,9 +1,9 @@
 //
-//SEXYHOOK sample and TEST
+// SEXYHOOK sample and TEST
 //
-//by rti
+// by rti
 //
-//new BSD ライセンス / NYSLライセンス 好きに使えばいいんぢゃなイカ ^p^
+// new BSD ライセンス / NYSLライセンス 好きに使えばいいんぢゃなイカ ^p^
 //
 #ifdef _WIN32
 	#include <windows.h>
@@ -11,14 +11,14 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include "sexyhook.h"	//セクシーフック
-//#include "sexyhook_addrutil.h"	//セクシーフック ユーティリティ
-//関数のテスト
+#include "sexyhook.h"	// セクシーフック
+//#include "sexyhook_addrutil.h"	// セクシーフック ユーティリティ
+// 関数のテスト
 int add(int a,int b)
 {
 	return a + b;
 }
-//クラスのテスト
+// クラスのテスト
 class testclass
 {
 public:
@@ -38,7 +38,7 @@ public:
 		}
 		else
 		{
-			//ここがテストできない。
+			// ここがテストできない。
 			return false;
 		}
 	}
@@ -46,16 +46,16 @@ public:
 	{
 		return a ? true : false;
 	}
-	//2000年以上か？
+	// 2000年以上か？
 	bool isOver2000year()
 	{
-		return time(NULL) >= 946652400;	//2000-01-01 00:00:00
+		return time(NULL) >= 946652400;	// 2000-01-01 00:00:00
 	}
 	static void test()
 	{
 		{
 			printf("\r\nクラスメソッドのフックその2\r\n");
-			//これで書き換えてしまえばもう大丈夫w
+			// これで書き換えてしまえばもう大丈夫w
 			SEXYHOOK_BEGIN(bool,SEXYHOOK_CLASS,&testclass2::checkCore,(int a))
 			{
 				return false;
@@ -64,30 +64,30 @@ public:
 			testclass2 cls;
 			SEXYHOOK_ASSERT( !cls.check() );
 		}
-		//time() を埋め込んでいるプログラムも黙らせられるよ
+		// time() を埋め込んでいるプログラムも黙らせられるよ
 		{
 			printf("\r\ntime関数のフックその2\r\n");
-			//これで書き換えてしまえばもう大丈夫w
+			// これで書き換えてしまえばもう大丈夫w
 			SEXYHOOK_BEGIN(time_t,SEXYHOOK_CDECL,&time,(time_t * a))
 			{
-				return 915116400;//1999-01-01 00:00:00
+				return 915116400;// 1999-01-01 00:00:00
 			}
 			SEXYHOOK_END();
-			//テスト
+			// テスト
 			testclass2 cls;
 			bool r = cls.isOver2000year();
-			SEXYHOOK_ASSERT( r == false );	//1999年です.
+			SEXYHOOK_ASSERT( r == false );	// 1999年です.
 		}
 		{
 			printf("\r\ntime関数のフックが終わっていること\r\n");
-			//スコープを抜けたのでtime()関数はもう上書きされない。
+			// スコープを抜けたのでtime()関数はもう上書きされない。
 			testclass2 cls;
 			bool r = cls.isOver2000year();
-			SEXYHOOK_ASSERT( r == true );	//2000年以上です.
+			SEXYHOOK_ASSERT( r == true );	// 2000年以上です.
 		}
 	}
 };
-//仮想/純粋仮想メソッドのテスト
+// 仮想/純粋仮想メソッドのテスト
 class Parent
 {
 	int Dummy;
@@ -115,7 +115,7 @@ public:
 		return 3;
 	}
 };
-//テンプレートクラスのテスト
+// テンプレートクラスのテスト
 template<typename _T> class TempTest
 {
 public:
@@ -124,7 +124,7 @@ public:
 		return a + b;
 	}
 };
-//オペレータオーバーロードのテスト
+// オペレータオーバーロードのテスト
 class OpClass
 {
 	int A;
@@ -142,12 +142,12 @@ public:
 		return z;
 	}
 };
-//グローバルなオペレーターオーバーロードには、まだ未対応です。ごめんなさい。
+// グローバルなオペレーターオーバーロードには、まだ未対応です。ごめんなさい。
 bool operator==(const OpClass& x, const OpClass& y)
 {
 	return x.getA() == y.getA();
 }
-//オーバーロードのテスト
+// オーバーロードのテスト
 int uadd(int a,int b)
 {
 	return a + b;
@@ -156,12 +156,12 @@ char uadd(char a,char b)
 {
 	return a + b;
 }
-//テンプレート関数のテスト
-//掛け算
+// テンプレート関数のテスト
+// 掛け算
 template<typename T> T mul( const T& a,const T& b ){
        return a * b;
 }
-//おまけ dumpする関数
+// おまけ dumpする関数
 static void hexDump(void* p,int size)
 {
 	printf("\r\nDUMP %p:",p);
@@ -178,7 +178,7 @@ static void hexDump(void* p,int size)
 	printf("\r\n");
 }
 #ifdef __GNUC__
-	//__stdcallなクラスメソッド.
+	// __stdcallなクラスメソッド.
 	class stdcallclass
 	{
 	public:
@@ -187,12 +187,12 @@ static void hexDump(void* p,int size)
 			return a + b;
 		}
 	};
-	//fastcallのテスト
+	// fastcallのテスト
 	int __attribute__ ((regparm(3))) fast_add(int a,int b)
 	{
 		return a + b;
 	}
-	//__fastcallなクラスメソッド.
+	// __fastcallなクラスメソッド.
 	class fastcallclass
 	{
 	public:
@@ -202,7 +202,7 @@ static void hexDump(void* p,int size)
 		}
 	};
 #else
-	//__stdcallなクラスメソッド.
+	// __stdcallなクラスメソッド.
 	class stdcallclass
 	{
 	public:
@@ -211,12 +211,12 @@ static void hexDump(void* p,int size)
 			return a + b;
 		}
 	};
-	//fastcallのテスト
+	// fastcallのテスト
 	int __fastcall fast_add(int a,int b)
 	{
 		return a + b;
 	}
-	//__fastcallなクラスメソッド.
+	// __fastcallなクラスメソッド.
 	class fastcallclass
 	{
 	public:
@@ -264,7 +264,7 @@ public:
 		return a + b + 20;
 	}
 };
-//private
+// private
 class private_testclass
 {
 private:
@@ -280,14 +280,14 @@ public:
 };
 int main()
 {
-	//フック元呼び出しなどのテスト
+	// フック元呼び出しなどのテスト
 	{
 		classMethodCallTest c(2);
 		{
-			int r = c.Add(10);		//10 + 2 = 12
+			int r = c.Add(10);		// 10 + 2 = 12
 			SEXYHOOK_ASSERT(r == 12);
 		}
-		//ただのフック その2 引数のチェック
+		// ただのフック その2 引数のチェック
 		{
 			SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,&classMethodCallTest::Add,(int a))
 			{
@@ -298,7 +298,7 @@ int main()
 			int r = c.Add(10);
 			SEXYHOOK_ASSERT(r == 20);
 		}
-		//ただのフック
+		// ただのフック
 		{
 			SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,&classMethodCallTest::Add,(int a))
 			{
@@ -308,39 +308,39 @@ int main()
 			int r = c.Add(10);
 			SEXYHOOK_ASSERT(r == 10);
 		}
-		//別のメソッドの呼び出し
+		// 別のメソッドの呼び出し
 		{
 			SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,&classMethodCallTest::Add,(int a))
 			{
 				return a * SEXYHOOK_THIS(classMethodCallTest*)->Sub(5);
 			}
 			SEXYHOOK_END();
-			int r = c.Add(10);		//10 * (5 - 2) = 30
+			int r = c.Add(10);		// 10 * (5 - 2) = 30
 			SEXYHOOK_ASSERT(r == 30);
 		}
-		//別のメンバ変数の呼び出し(ただし public だけ)
+		// 別のメンバ変数の呼び出し(ただし public だけ)
 		{
 			SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,&classMethodCallTest::Add,(int a))
 			{
 				return a * SEXYHOOK_THIS(classMethodCallTest*)->Secret;
 			}
 			SEXYHOOK_END();
-			int r = c.Add(10);		//10 * 2 = 20
+			int r = c.Add(10);		// 10 * 2 = 20
 			SEXYHOOK_ASSERT(r == 20);
 		}
-		//自分自身の再呼び出し
+		// 自分自身の再呼び出し
 		{
 			SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,&classMethodCallTest::Add,(int a))
 			{
-				//元の関数を呼び出す
+				// 元の関数を呼び出す
 				return CallOriginalFunction(a);
 			}
 			SEXYHOOK_END();
-			int r = c.Add(10);		//10 + 2 = 12
+			int r = c.Add(10);		// 10 + 2 = 12
 			SEXYHOOK_ASSERT(r == 12);
 		}
 	}
-	//仮想メソッド
+	// 仮想メソッド
 	{
 		printf("\r\n仮想メソッドのテスト\r\n");
 		int cf,cg,pf,pg;
@@ -355,10 +355,10 @@ int main()
 		printf("((Parent*)&child)->f : %d\r\n",pf);
 		printf("((Parent*)&child)->g : %d\r\n",pg);
 		{
-			//ここからフック
+			// ここからフック
 			SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,&Child::g,())
 			{
-				return 103;	//Child::g
+				return 103;	// Child::g
 			}
 			SEXYHOOK_END(&child);
 			printf("Child.gをフック\r\n");
@@ -374,10 +374,10 @@ int main()
 			SEXYHOOK_ASSERT(pg == 103);
 		}
 		{
-			//ここからフック
+			// ここからフック
 			SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,&Child::f,())
 			{
-				return 102;	//Child::f
+				return 102;	// Child::f
 			}
 			SEXYHOOK_END(&child);
 			printf("Child.fをフック\r\n");
@@ -393,15 +393,15 @@ int main()
 			SEXYHOOK_ASSERT(pf == 102);
 		}
 	}
-	//テンプレート関数のテスト
+	// テンプレート関数のテスト
 	{
-		//割り算に変更
+		// 割り算に変更
 		SEXYHOOK_BEGIN( int, SEXYHOOK_CDECL, &mul<int>, (const int& a , const int& b))
 		{
 			return a  / b;
 		}
 		SEXYHOOK_END();
-		int r1 = mul(9,3);			//こっちのみ書き換える
+		int r1 = mul(9,3);			// こっちのみ書き換える
 		long r2 = mul<long>(9,3);
 		printf("\r\nテンプレート関数のテスト\r\n");
 		printf("r1:%d // こっちだけ割り算に\r\n", r1);
@@ -409,7 +409,7 @@ int main()
 		SEXYHOOK_ASSERT(r1 == 3);
 		SEXYHOOK_ASSERT(r2 == 27);
 	}
-	//グローバルなオペレーターオーバーロード
+	// グローバルなオペレーターオーバーロード
 	{
 		OpClass a(10);
 		OpClass b(10);
@@ -419,15 +419,15 @@ int main()
 			return false;
 		}
 		SEXYHOOK_END();
-		//書き換えて等しくなくする.
+		// 書き換えて等しくなくする.
 		bool br2 = (a == b);
 		printf("\r\nグローバルなオペレーターオーバーロードのテスト\r\n");
-		printf("フック前 %d //等しいのでtrue \r\n",(int)br);
-		printf("フック後 %d //常にfalse \r\n",(int)br2);
+		printf("フック前 %d // 等しいのでtrue \r\n",(int)br);
+		printf("フック後 %d // 常にfalse \r\n",(int)br2);
 		SEXYHOOK_ASSERT(br == true);
 		SEXYHOOK_ASSERT(br2 != true);
 	}
-	//オーバーロード(別型定義)のテスト
+	// オーバーロード(別型定義)のテスト
 	{
 		SEXYHOOK_BEGIN(int,SEXYHOOK_CDECL,&uadd,(int a,int b))
 		{
@@ -436,37 +436,37 @@ int main()
 		SEXYHOOK_END();
 		int r = uadd(1,2);
 		printf("\r\nオーバーロード(別型定義)のテスト\r\n");
-		printf("r1:%d //足し算を引き算に \r\n",r);
+		printf("r1:%d // 足し算を引き算に \r\n",r);
 		SEXYHOOK_ASSERT(r == -1);
 	}
-	//演算子オーバーロードのテスト
+	// 演算子オーバーロードのテスト
 	{
 		OpClass a(10);
 		OpClass b(20);
-		//フック関数を定義する前だからフックされない
+		// フック関数を定義する前だからフックされない
 		OpClass c = a + b;
-		//ここからフック
+		// ここからフック
 		SEXYHOOK_BEGIN(OpClass,SEXYHOOK_CLASS,&OpClass::operator +,(const OpClass& x))
 		{
-//			OpClass z( this->A - x.A );	//thisは使えない...
-//			OpClass z( 1000 - x.A );	//そうか、クラスの中ではないのか...いっそfiriendに(ry
+			//OpClass z( this->A - x.A );	// thisは使えない...
+			//OpClass z( 1000 - x.A );	// そうか、クラスの中ではないのか...いっそfiriendに(ry
 			OpClass z( 1000 );
 			return z;
 		}
 		SEXYHOOK_END();
-		//これはフックされる.
+		// これはフックされる.
 		OpClass d = a + b;
 		printf("\r\n演算子オーバーロードのテスト\r\n");
-		printf("OpClass(C) %d //固定値 \r\n" , c.getA());
+		printf("OpClass(C) %d // 固定値 \r\n" , c.getA());
 		printf("OpClass(D) %d\r\n" , d.getA());
 		SEXYHOOK_ASSERT(c.getA() == 30);
-		SEXYHOOK_ASSERT(d.getA() == 1000);	//固定値
+		SEXYHOOK_ASSERT(d.getA() == 1000);	// 固定値
 	}
-	//テンプレートクラスのテスト
+	// テンプレートクラスのテスト
 	{
 		int r;
 		TempTest<int> t;
-		//ここからフック
+		// ここからフック
 		SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,&TempTest<int>::add,(int a,int b))
 		{
 			return a - b;
@@ -474,57 +474,57 @@ int main()
 		SEXYHOOK_END();
 		r = t.add(1,2);
 		printf("\r\nテンプレートクラスのテスト\r\n");
-		printf("TempTest<int> : %d //足し算を引き算に\r\n",r);
+		printf("TempTest<int> : %d // 足し算を引き算に\r\n",r);
 		SEXYHOOK_ASSERT(r == -1);
 	}
-	//クラスメソッドのテスト
+	// クラスメソッドのテスト
 	{
-		//クラスメソッドの場合は SEXYHOOK_CLASS_HOOK_2_BEGIN を使ってください。
-		//2は引数の数です。
+		// クラスメソッドの場合は SEXYHOOK_CLASS_HOOK_2_BEGIN を使ってください。
+		// 2は引数の数です。
 		SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,&testclass::add,(int a,int b))
 		{
-			return a - b;	//足し算を引き算に上書きする.
+			return a - b;	// 足し算を引き算に上書きする.
 		}
 		SEXYHOOK_END();
 		testclass myclass;
-		int r = myclass.add(10,20);	//足し算を引き算に上書きする.
+		int r = myclass.add(10,20);	// 足し算を引き算に上書きする.
 		printf("\r\nクラスメソッドのテスト\r\n");
 		printf("r1 : %d\r\n",r);
 		SEXYHOOK_ASSERT(r == -10);
 	}
 #ifdef _WIN32
-	//APIフックのテスト
+	// APIフックのテスト
 	{
-		//HeapCreate API を失敗させてみる。
-		//もしかしたら、win95系だとだめかも、、、そんなの誰も使っていないからいいか。
+		// HeapCreate API を失敗させてみる。
+		// もしかしたら、win95系だとだめかも、、、そんなの誰も使っていないからいいか。
 		SEXYHOOK_BEGIN(int,SEXYHOOK_STDCALL,&HeapCreate,(HANDLE a1,DWORD a2,SIZE_T a3))
 		{
 			return NULL;
 		}
 		SEXYHOOK_END();
-		//フックして
+		// フックして
 		HANDLE h = HeapCreate(0,0,100);
 		printf("\r\nAPIフックのテスト\r\n");
 		printf("HeapCreate : %p\r\n" , h);
 		SEXYHOOK_ASSERT(h == NULL);
 	}
-	//APIフックのテスト その2
+	// APIフックのテスト その2
 	{
-		//HeapCreate API を失敗させてみる。
-		//もしかしたら、win95系だとだめかも、、、そんなの誰も使っていないからいいか。
+		// HeapCreate API を失敗させてみる。
+		// もしかしたら、win95系だとだめかも、、、そんなの誰も使っていないからいいか。
 		SEXYHOOK_BEGIN(int,SEXYHOOK_STDCALL,SEXYHOOK_DYNAMICLOAD
 					("kernel32.dll","HeapCreate"),(HANDLE a1,DWORD a2,SIZE_T a3))
 		{
 			return NULL;
 		}
 		SEXYHOOK_END();
-		//フックして
+		// フックして
 		HANDLE h = HeapCreate(0,0,100);
 		printf("\r\nAPIフックのテスト\r\n");
 		printf("HeapCreate : %p\r\n" , h);
 		SEXYHOOK_ASSERT(h == NULL);
 	}
-	//ダイナミックリンクのフック
+	// ダイナミックリンクのフック
 	{
 		printf("ダイナミックリンク のテスト\r\n");
 		SEXYHOOK_BEGIN(int,SEXYHOOK_STDCALL,SEXYHOOK_DYNAMICLOAD("dlltest.dll","DllAdd"),(int a , int b))
@@ -534,7 +534,7 @@ int main()
 		SEXYHOOK_END();
 		HMODULE mod = LoadLibraryA("dlltest.dll");
 		SEXYHOOK_ASSERT(mod != NULL);
-		//export
+		// export
 		PROC orignalProc = GetProcAddress(mod , "DllAdd" );
 		SEXYHOOK_ASSERT(orignalProc != NULL);
 		int r = ((int (__stdcall *) (int,int))orignalProc)(1,2);
@@ -542,10 +542,10 @@ int main()
 		SEXYHOOK_ASSERT(r == -1);
 		FreeLibrary(mod);
 	}
-	//ダイナミックリンクの中の windows apiのフック
+	// ダイナミックリンクの中の windows apiのフック
 	{
 		printf("ダイナミックリンクの中の windows apiのフックのテスト\r\n");
-		//ふつーにそのままAPIを
+		// ふつーにそのままAPIを
 		SEXYHOOK_BEGIN(int,SEXYHOOK_STDCALL, MessageBoxA ,
 					(HWND hWnd, LPCSTR lpText , LPCSTR lpCaption ,  UINT uType))
 		{
@@ -555,20 +555,20 @@ int main()
 		SEXYHOOK_END();
 		HMODULE mod = LoadLibraryA("dlltest.dll");
 		SEXYHOOK_ASSERT(mod != NULL);
-		//export
+		// export
 		PROC orignalProc = GetProcAddress(mod , "DllMessageBoxAPI" );
 		SEXYHOOK_ASSERT(orignalProc != NULL);
-		//フックして
+		// フックして
 		int r = ((int (__stdcall *) (int,int))orignalProc)(1,2);
 		printf("dlltest.dll : DllMessageBoxAPI : %d\r\n" , r);
 		SEXYHOOK_ASSERT(r == -99);
 		FreeLibrary(mod);
 	}
-	//ダイナミックリンクの中でさらにダイナミックリンクのフック
+	// ダイナミックリンクの中でさらにダイナミックリンクのフック
 	{
 		printf("ダイナミックリンクの中でさらにダイナミックリンクのテスト\r\n");
-		//dlltest.dll の DllMul は、 dlltest2.dll の Dll2Mul を呼び出して掛け算を行って結果を返す.
-		//dlltest"2".dll の Dll2Mul をフックする.
+		// dlltest.dll の DllMul は、 dlltest2.dll の Dll2Mul を呼び出して掛け算を行って結果を返す.
+		// dlltest"2".dll の Dll2Mul をフックする.
 		SEXYHOOK_BEGIN(int,SEXYHOOK_STDCALL,SEXYHOOK_DYNAMICLOAD("dlltest2.dll","Dll2Mul"),(int a , int b))
 		{
 			return a / b;
@@ -576,18 +576,18 @@ int main()
 		SEXYHOOK_END();
 		HMODULE mod = LoadLibraryA("dlltest.dll");
 		SEXYHOOK_ASSERT(mod != NULL);
-		//export
-		PROC orignalProc = GetProcAddress(mod , "DllMul" );	//dlltest.dll の DllMul は、 dlltest2.dll の Dll2Mul を呼び出す.
+		// export
+		PROC orignalProc = GetProcAddress(mod , "DllMul" );	// dlltest.dll の DllMul は、 dlltest2.dll の Dll2Mul を呼び出す.
 		SEXYHOOK_ASSERT(orignalProc != NULL);
-		int r = ((int (__stdcall *) (int,int))orignalProc)(4,2);	//4 * 2 ではなく、 4 / 2を実行
+		int r = ((int (__stdcall *) (int,int))orignalProc)(4,2);	// 4 * 2 ではなく、 4 / 2を実行
 		printf("dlltest.dll : DllMul : %d\r\n" , r);
 		SEXYHOOK_ASSERT(r == 2);	// 4 / 2 = 2
 		FreeLibrary(mod);
 	}
 #endif	// _WIN32
-	//関数のフックのテスト
+	// 関数のフックのテスト
 	{
-		//add関数を書き換えて引き算にする。
+		// add関数を書き換えて引き算にする。
 		SEXYHOOK_BEGIN(int,SEXYHOOK_CDECL,&add,(int a,int b))
 		{
 			return a - b;
@@ -598,9 +598,9 @@ int main()
 		printf("cc: %d\r\n",cc);
 		SEXYHOOK_ASSERT(cc == -10);
 	}
-	//C関数strstrのフック
+	// C関数strstrのフック
 	{
-		//これで書き換えてしまえばもう大丈夫w
+		// これで書き換えてしまえばもう大丈夫w
 		SEXYHOOK_BEGIN(const char *,SEXYHOOK_CDECL,&strstr,(const char * p,const char *p2))
 		{
 			return NULL;
@@ -608,16 +608,16 @@ int main()
 		SEXYHOOK_END();
 		const char * str1 = "hello";
 		const char * str2 = "hel";
-		const char * p2 = strstr(str1,str2);	//strstr("hello","hel") だと gcc が -O0なのに最適化するらしい.
+		const char * p2 = strstr(str1,str2);	// strstr("hello","hel") だと gcc が -O0なのに最適化するらしい.
 		printf("\r\nC関数strstrのフック\r\n");
-		printf("strstr: %p //ヒットしたけど NULL \r\n",p2);
+		printf("strstr: %p // ヒットしたけど NULL \r\n",p2);
 		SEXYHOOK_ASSERT(p2 == NULL);
 	}
-	//クラスメソッドでのテスト例
+	// クラスメソッドでのテスト例
 	{
 		testclass2::test();
 	}
-	//__stdcallなクラスメソッドのテスト
+	// __stdcallなクラスメソッドのテスト
 	{
 		SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS_STDCALL,&stdcallclass::add,(int a,int b))
 		{
@@ -629,7 +629,7 @@ int main()
 		int r = c.add(10,20);
 		SEXYHOOK_ASSERT(r == -10);
 	}
-	//__fastcallのテスト
+	// __fastcallのテスト
 	{
 		SEXYHOOK_BEGIN(int,SEXYHOOK_FASTCALL,&fast_add,(int a,int b))
 		{
@@ -640,7 +640,7 @@ int main()
 		int r = fast_add(10,20);
 		SEXYHOOK_ASSERT(r == -10);
 	}
-	//__fastcall class method のテスト
+	// __fastcall class method のテスト
 	{
 		SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS_FASTCALL,&fastcallclass::add,(int a,int b))
 		{
@@ -653,8 +653,8 @@ int main()
 		SEXYHOOK_ASSERT(r == -10);
 	}
 #ifndef __GNUC__
-	//const同名
-	//gcc で動かない、、、、
+	// const同名
+	// gcc で動かない、、、、
 	{
 		SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,&constdoumei::add,(int a,int b))
 		{
@@ -663,7 +663,7 @@ int main()
 		SEXYHOOK_END();
 		printf("\r\nconst同名のフック constがつかない方\r\n");
 		constdoumei c;
-		int r = c.add(10,20);		//フック
+		int r = c.add(10,20);		// フック
 		SEXYHOOK_ASSERT(r == -10);
 		const constdoumei c2;
 		r = c2.add(10,20);
@@ -680,26 +680,26 @@ int main()
 		int r = c.add(10,20);
 		SEXYHOOK_ASSERT(r == 30 + 20);
 		const constdoumei c2;
-		r = c2.add(10,20);	//フック
+		r = c2.add(10,20);	// フック
 		SEXYHOOK_ASSERT(r == -10);
 	}
 #endif	// !__GNUC__
 /*
-	//private メソッドのアドレスを算出してフック.
-	//今のところ VC6 + PlatformSDKでしか動作しない、、なんで？
+	// private メソッドのアドレスを算出してフック.
+	// 今のところ VC6 + PlatformSDKでしか動作しない、、なんで？
 	{
 		printf("\r\nprivate メソッドのアドレスを算出してフック\r\n");
 		private_testclass c;
-		//ここではまだフックしていない
+		// ここではまだフックしていない
 		int r = c.public_add(10,20);
 		SEXYHOOK_ASSERT(r == 30);
-		//private メソッドのアドレスを算出してフック.
+		// private メソッドのアドレスを算出してフック.
 		SEXYHOOK_BEGIN(int,SEXYHOOK_CLASS,SEXYHOOKAddrUtil::strstr_addr("private_testclass::private_add"),(int a,int b))
 		{
 			return a - b;
 		}
 		SEXYHOOK_END();
-		//フックできたことを確認!
+		// フックできたことを確認!
 		r = c.public_add(10,20);
 		SEXYHOOK_ASSERT(r == -10);
 	}
