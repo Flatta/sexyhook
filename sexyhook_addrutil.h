@@ -1,7 +1,6 @@
 #ifdef _MSC_VER
 	#pragma once
 #endif
-
 #ifndef ____SEXYHOOK_ADDRUTIL____72
 #define ____SEXYHOOK_ADDRUTIL____72
 //
@@ -12,7 +11,6 @@
 // by rti
 //
 //
-
 #ifdef _WIN32
 	#include <windows.h>
 	#include <imagehlp.h>
@@ -32,17 +30,14 @@
 	#include <string.h>
 	typedef void* PROC;
 #endif
-
 class SEXYHOOKAddrUtil
 {
 public:
-
 #ifdef _WIN32
 	//参考 :pdb2map.
 	static void* strstr_addr(const char * inFunctionName)
 	{
 		BOOL r;
-
 		char filename[MAX_PATH] = {0};
 		r = ::GetModuleFileNameA(NULL,filename, MAX_PATH);
 		if ( !r )
@@ -50,7 +45,6 @@ public:
 			//自分のファイル名を取得できません
 			SEXYHOOK_BREAKPOINT;
 		}
-
 		//シンボルエンジンの初期化
 		r = ::SymInitialize(NULL , NULL , FALSE);
 		if (!r)
@@ -58,8 +52,7 @@ public:
 			//エンジンを初期化できません.
 			SEXYHOOK_BREAKPOINT;
 		}
-
-		//自分のファイルを開く. 
+		//自分のファイルを開く.
 		IMAGEHLP_MODULE imageModule = { sizeof(IMAGEHLP_MODULE) };
         HANDLE fileHandle = CreateFileA ( filename,
                              GENERIC_READ ,
@@ -73,14 +66,12 @@ public:
 			//自分のファイルを開けません
 			SEXYHOOK_BREAKPOINT;
         }
-
         DWORD64 baseAddress = SymLoadModule64 (NULL,fileHandle,filename,NULL,0,0);
 		if (!baseAddress)
 		{
 			CloseHandle(fileHandle);
 			SEXYHOOK_BREAKPOINT;
 		}
-		
 		class EnumSymProcCallbackClass
 		{
 		public:
@@ -93,7 +84,7 @@ public:
 			const char * FunctionName;
 			void* FoundAddress;
 /*
-			static BOOL CALLBACK EnumSymProc( 
+			static BOOL CALLBACK EnumSymProc(
 				PSTR  SymbolName,
 				ULONG SymbolAddress,
 				ULONG SymbolSize,
@@ -112,7 +103,7 @@ public:
 				return FALSE;
 			}
 */
-			static BOOL CALLBACK EnumSymProc2( 
+			static BOOL CALLBACK EnumSymProc2(
 					PSYMBOL_INFO pSymInfo,
 					ULONG SymbolSize,
 					PVOID UserContext
@@ -129,31 +120,24 @@ public:
 				myThis->FoundAddress = (void*)pSymInfo->Address;
 				return FALSE;
 			}
-
 		} enumcallback(inFunctionName);
-		
 		//シンボルの列挙
 //		r = SymEnumerateSymbols(NULL,baseAddress,(PSYM_ENUMSYMBOLS_CALLBACK)EnumSymProcCallbackClass::EnumSymProc,(void*)&enumcallback);
 		r = SymEnumSymbols(NULL,baseAddress,NULL,(PSYM_ENUMERATESYMBOLS_CALLBACK)EnumSymProcCallbackClass::EnumSymProc2,(void*)&enumcallback);
-
 		if (!r)
 		{
 			CloseHandle(fileHandle);
 			SEXYHOOK_BREAKPOINT;
 		}
-
 		SymCleanup(NULL);
 		CloseHandle(fileHandle);
-
 		//見つからなかった？
 		if (enumcallback.FoundAddress == NULL)
 		{
 			SEXYHOOK_BREAKPOINT;
 		}
-
 		return enumcallback.FoundAddress;
 	}
 #endif	// _WIN32
 };
-
 #endif	// !____SEXYHOOK_ADDRUTIL____72

@@ -1,7 +1,6 @@
 #ifdef _MSC_VER
 	#pragma once
 #endif
-
 #ifndef ____SEXYHOOK____72
 #define ____SEXYHOOK____72
 //
@@ -14,19 +13,18 @@
 //
 // new BSD ライセンス / NYSL ライセンス 好きに使えばいいんぢゃない？ ^q^
 //
-
 //includeとか定義とか.
 #ifdef _WIN32
 	//windows
 	#include <windows.h>
 	#include <imagehlp.h>
-	#ifdef _MSC_VER 
-		#if _MSC_VER <= 1200 
-			typedef int intptr_t; 
-			typedef unsigned int uintptr_t; 
-		#endif 
-	#else 
-	#endif 
+	#ifdef _MSC_VER
+		#if _MSC_VER <= 1200
+			typedef int intptr_t;
+			typedef unsigned int uintptr_t;
+		#endif
+	#else
+	#endif
 #else
 	//linux
 	#include <stdarg.h>
@@ -35,7 +33,6 @@
 	#include <string.h>
 	typedef void* PROC;
 #endif
-
 //強制的にポインタにする(邪道)
 #ifdef __GNUC__
 	// ... を悪用した技
@@ -46,7 +43,6 @@
 		va_start(ap, dummy);
 		void* p = va_arg(ap, void*);
 		va_end(ap);
-
 		return p;
 	}
 #else
@@ -56,7 +52,6 @@
 		return *reinterpret_cast<void**>(&p);
 	}
 #endif
-
 //ブレークポイントとアサーション
 #ifdef __GNUC__
 	//gcc
@@ -65,7 +60,7 @@
 		if (!(f) ) \
 		{ \
 			asm ("int $3") ; \
-		} 
+		}
 #else
 	//msvc
 	#define SEXYHOOK_BREAKPOINT	{ DebugBreak(); }
@@ -76,9 +71,8 @@
 			BOOL bQuit = PeekMessage(&msg, NULL, WM_QUIT, WM_QUIT, PM_REMOVE);	\
 			if (bQuit)	PostQuitMessage((int)msg.wParam);	\
 			DebugBreak(); \
-		} 
+		}
 #endif
-
 //呼び出し規約
 #ifdef __GNUC__
 	//gcc
@@ -101,29 +95,24 @@
 	#define SEXYHOOK_CLASS_CDECL	__cdecl
 	#define SEXYHOOK_CLASS_FASTCALL	__fastcall
 #endif
-
 //__LINE__を文字列にするためのマクロ
 //参考:http://oshiete1.goo.ne.jp/qa1219076.html
 #define SEXYHOOK_LINE_TOSTR(x) SEXYHOOK_LINE_TOSTR_(x)
 #define SEXYHOOK_LINE_TOSTR_(x) #x
-
 #define SEXYHOOK_LINE_STRCAT(x,y) SEXYHOOK_LINE_STRCAT_(x,y)
 #define SEXYHOOK_LINE_STRCAT_(x,y) x##y
-
 //マクロを再度展開する.
 #define SEXYHOOK_REMACRO(MACRO)	MACRO
-
 //クラスメソッドでない場合は、 static 指定にしないといけないので、強引に static文字列を作り出す.
 #define SEXYHOOK_STDCALL__STATIC			static
 #define SEXYHOOK_CDECL__STATIC				static
 #define SEXYHOOK_FASTCALL__STATIC			static
 #define SEXYHOOK_FASTCALLN__STATIC			static
-#define SEXYHOOK_CLASS__STATIC	
-#define SEXYHOOK_CLASS_STDCALL__STATIC	
-#define SEXYHOOK_CLASS_CDECL__STATIC	
-#define SEXYHOOK_CLASS_FASTCALL__STATIC	
-#define SEXYHOOK_CLASS_FASTCALLN__STATIC	
-
+#define SEXYHOOK_CLASS__STATIC
+#define SEXYHOOK_CLASS_STDCALL__STATIC
+#define SEXYHOOK_CLASS_CDECL__STATIC
+#define SEXYHOOK_CLASS_FASTCALL__STATIC
+#define SEXYHOOK_CLASS_FASTCALLN__STATIC
 //クラスメソッドの場合は this を。そうでなければ NULL を作成する.
 #define SEXYHOOK_STDCALL__THIS			NULL
 #define SEXYHOOK_CDECL__THIS			NULL
@@ -133,30 +122,26 @@
 #define SEXYHOOK_CLASS_STDCALL__THIS	this
 #define SEXYHOOK_CLASS_CDECL__THIS		this
 #define SEXYHOOK_CLASS_FASTCALL__THIS	this
-
 //関数なのかメソッドなのかで typedef の所を替える.
-#define SEXYHOOK_STDCALL__HOOKDEF			
-#define SEXYHOOK_CDECL__HOOKDEF			
-#define SEXYHOOK_FASTCALL__HOOKDEF			
-#define SEXYHOOK_FASTCALLN__HOOKDEF			
+#define SEXYHOOK_STDCALL__HOOKDEF
+#define SEXYHOOK_CDECL__HOOKDEF
+#define SEXYHOOK_FASTCALL__HOOKDEF
+#define SEXYHOOK_FASTCALLN__HOOKDEF
 #define SEXYHOOK_CLASS__HOOKDEF				SEXYHOOKFuncBase::
 #define SEXYHOOK_CLASS_STDCALL__HOOKDEF		SEXYHOOKFuncBase::
 #define SEXYHOOK_CLASS_CDECL__HOOKDEF		SEXYHOOKFuncBase::
 #define SEXYHOOK_CLASS_FASTCALL__HOOKDEF	SEXYHOOKFuncBase::
 #define SEXYHOOK_CLASS_FASTCALLN__HOOKDEF	SEXYHOOKFuncBase::
-
 //const同名
-#define SEXYHOOK_STDCALL__CONST			
-#define SEXYHOOK_CDECL__CONST			
-#define SEXYHOOK_FASTCALL__CONST			
-#define SEXYHOOK_FASTCALLN__CONST			
+#define SEXYHOOK_STDCALL__CONST
+#define SEXYHOOK_CDECL__CONST
+#define SEXYHOOK_FASTCALL__CONST
+#define SEXYHOOK_FASTCALLN__CONST
 #define SEXYHOOK_CLASS__CONST				const
 #define SEXYHOOK_CLASS_STDCALL__CONST		const
 #define SEXYHOOK_CLASS_CDECL__CONST			const
 #define SEXYHOOK_CLASS_FASTCALL__CONST		const
 #define SEXYHOOK_CLASS_FASTCALLN__CONST		const
-
-
 //SEXYHOOK本体 クラス内クラスとして実装する.
 #define SEXYHOOK_BEGIN(RET,CALLTYPE,FUNCADDRESS,ARGS) \
 	class SEXYHOOK_LINE_STRCAT(SEXYHOOKFunc,__LINE__) : public SEXYHOOKFuncBase { \
@@ -201,32 +186,22 @@
 		{ \
 			SEXYHOOK_LINE_STRCAT(SEXYHOOKFunc,__LINE__)* sexyhookThis = ((SEXYHOOK_LINE_STRCAT(SEXYHOOKFunc,__LINE__)*)(*getSexyhookThisPointer()) ); \
 			void * sexyhookOrignalThis = (void*) SEXYHOOK_REMACRO(CALLTYPE##__THIS);
-
 #define SEXYHOOK_END \
 	} } SEXYHOOK_LINE_STRCAT(objectFUNCHook,__LINE__);\
 	SEXYHOOK_LINE_STRCAT(objectFUNCHook,__LINE__).Hook
-
 #define SEXYHOOK_END_AS() \
-	} } 
-
-
-
+	} }
 //一時的にフックをやめる 不要になりました。
-#define SEXYHOOK_UNHOOK()	
-
+#define SEXYHOOK_UNHOOK()
 //オリジナルの this pointer
 #define SEXYHOOK_THIS(cast)	((cast) sexyhookOrignalThis )
-
 //同名がいたりして、名前があいまいなった場合の解決策をユーザーに提供する.
 #define SEXYHOOK_AUTOCAST_CONST(func)	(HookDefConst)(func)
-
 //DLLをロードする構文。
 //あれ、NULL返しているだけに見えるよね。うん。だけどね、ちゃんと動くから安心してほしい。
 #define SEXYHOOK_DYNAMICLOAD(DLLNAME,FUNCNAME)	NULL
-
 //関数フックを行う際に書き換える領域のサイズ
 typedef  char FUNCTIONHOOK_ASM[14*3] ;
-
 //関数/メソッドをフックする.
 class SEXYHOOKFuncBase
 {
@@ -240,17 +215,14 @@ class SEXYHOOKFuncBase
 	int              HookAsmSize;
 	//オペコード長さを検討して決定した、上書きされるサイズ assert(SaveAsmSize >= HookAsmSize)
 	int	             SaveAsmSize;
-
 	//DLLインスタンス
 	void*			 APIHookDLLHandle;
-
 public:
 	enum SEXYHOOK_CPU_ARCHITECTURE
 	{
 		 SEXYHOOK_CPU_ARCHITECTURE_X86
 		,SEXYHOOK_CPU_ARCHITECTURE_X64
 	};
-
 	//関数フックを開始する.
 	void FunctionHookFunction(void * inUkeFunctionProc , void * inSemeFunctionProc ,void * inCallOriginalFunctionProc , void * inVCallThisPointer )
 	{
@@ -258,54 +230,43 @@ public:
 		uintptr_t semeFunctionAddr = CalcSemeFunctionAddress(inSemeFunctionProc );
 		//フックされる関数(受け)が開始するアドレスを求める
 		uintptr_t ukeFunctionAddr =  CalcUkeFunctionAddress(inUkeFunctionProc , inVCallThisPointer);
-
-
 		//書き換えるマシン語
 		//トランポリンフックを行うオペコードを生成し、長さを返す.
 		this->HookAsmSize = MakeTrampolineHookAsm( &this->HookAsm , ukeFunctionAddr , semeFunctionAddr) ;
 		//オペランド調を考慮して、破壊するバイトサイズを決定する.
 		this->SaveAsmSize = CalcSeparateOpecodeLength(ukeFunctionAddr,this->HookAsmSize);
-
 		this->OrignalFunctionAddr = (void*)ukeFunctionAddr;
 		//フックされる関数の先頭を書き換えて、フックルーチンへ制御を移すようにする。
 		BackupFunction(this->OrignalFunctionAddr ,&this->OrignalAsm,this->SaveAsmSize);
 		OverraideFunction(this->OrignalFunctionAddr , this->HookAsm,this->HookAsmSize);
-
 		//フック用に退避させたルーチンの末尾に元のコードに戻るjmpコードを埋め込む
 		uintptr_t orignalCallFunctionAddr = CalcSemeFunctionAddress(inCallOriginalFunctionProc );
 		int orginalCallAsmSize = MakeTrampolineHookAsm(
 			 (FUNCTIONHOOK_ASM*) (((uintptr_t)&this->OrignalAsm) + this->SaveAsmSize)
-			, orignalCallFunctionAddr + this->SaveAsmSize 
+			, orignalCallFunctionAddr + this->SaveAsmSize
 			, ukeFunctionAddr + this->SaveAsmSize ) ;
 		OverraideFunction((void*)orignalCallFunctionAddr , OrignalAsm ,this->SaveAsmSize + orginalCallAsmSize);
 		return ;
 	}
-
 	//フックするに使われた構文を見て、
 	//SEXYHOOK_APILOAD だったら、dllのロードを仕込む。 evalならぬ、evil。
 	void* EvalLoad(const char * inAddress)
 	{
 		//初期化する.
 		this->APIHookDLLHandle = NULL;
-
 		const char * p = inAddress;
-
 		p = strstr(p , "SEXYHOOK_DYNAMICLOAD");
 		if (!p) return NULL;
-
 		//第1引数 DLL名
 		const char * dll1 = strstr(p , "\"");
 		if (!dll1) return NULL;
 		const char * dll2 = strstr(dll1+1 , "\"");
 		if (!dll2) return NULL;
-
 		//第2引数 関数名
 		const char * func1 = strstr(dll2+1 , "\"");
 		if (!func1) return NULL;
 		const char * func2 = strstr(func1+1 , "\"");
 		if (!func2) return NULL;
-
-
 		//文字列をバッファに複製する.
 		char buffer[1024];
 		int len = (int)(func2 - inAddress) + 1;
@@ -315,7 +276,6 @@ public:
 			return NULL;
 		}
 		memcpy(buffer , inAddress , len );
-
 		//終端埋め込んで、
 		buffer[(int)(dll2 - inAddress) ] = '\0';
 		buffer[(int)(func2 - inAddress) ] = '\0';
@@ -342,13 +302,11 @@ public:
 		}
 		//開放のための記録.
 		this->APIHookDLLHandle = (void*)mod;
-		
 		return orignalProc;
 #else
 		return NULL;
 #endif
 	}
-
 	//関数フックをやめる
 	void FunctionUnHookFunction()
 	{
@@ -358,7 +316,6 @@ public:
 		}
 		OverraideFunction(this->OrignalFunctionAddr , this->OrignalAsm , this->SaveAsmSize);
 		this->OrignalFunctionAddr = NULL;
-
 		//APIをアンロードしなくてはいけない場合は開放する.
 		if(this->APIHookDLLHandle)
 		{
@@ -374,7 +331,6 @@ private:
 	{
 		return this->OrignalFunctionAddr;
 	}
-
 	//フックする関数(攻め)が開始するアドレスを求める
 	uintptr_t CalcSemeFunctionAddress(void * inSemeFunctionProc )
 	{
@@ -392,7 +348,6 @@ private:
 			return (uintptr_t)inSemeFunctionProc ;
 		}
 	}
-
 	//MSVC++ の vcallを解析する.
 	uintptr_t CalcVCall(uintptr_t overraideFunctionAddr , void * inVCallThisPointer )
 	{
@@ -420,7 +375,6 @@ private:
 			//vcallではない.
 			return 0;
 		}
-
 		int plusAddress = 0;
 		if (*((unsigned char*)overraideFunctionAddr+vcallhead ) == 0x20)
 		{
@@ -439,7 +393,6 @@ private:
 		}
 		//C言語のおせっかいで、ポインタは型分プラスしてしまうので、ポインタのサイズで割っとく.
 		plusAddress = plusAddress / sizeof(void*);
-
 		//このような関数に一時的に飛ばされている場合...
 		//			vcall:
 		//			00402BA0   mov         eax,dword ptr [ecx]
@@ -457,7 +410,6 @@ private:
 			//SEXYHOOK_CLASS_END_VCALL(thisClass) を利用してください。
 			SEXYHOOK_BREAKPOINT;
 		}
-
 		/*
 			//こういう演算をしたい  inVCallThisPointer = &this;
 		_asm
@@ -467,8 +419,7 @@ private:
 			mov ecx,[ecx];
 			mov overraideFunctionAddr,ecx;
 		}
-
-					or 
+					or
 		_asm
 		{
 			mov ecx,inVCallThisPointer;
@@ -486,11 +437,8 @@ private:
 			uintptr_t jmpaddress = *((unsigned long*)((unsigned char*)overraideFunctionAddr+1));
 			overraideFunctionAddr = (((uintptr_t)overraideFunctionAddr) + jmpaddress) + 5;	//+5は e9 00 00 00 00 (ILTのサイズ)
 		}
-
 		return overraideFunctionAddr;
 	}
-
-
 	//フックされる関数(受け)が開始するアドレスを求める
 	uintptr_t CalcUkeFunctionAddress(void * inUkeFunctionProc , void * inVCallThisPointer)
 	{
@@ -510,12 +458,10 @@ private:
 				//とりあえず、 (index - 1) / sizeof(void*) でアドレスが求まるみたい.
 				//コレであっているのか不安だけど、とりあえず動くよ.
 				uintptr_t index = ((uintptr_t)inUkeFunctionProc - 1) / sizeof(void*);
-
 				//vtable から index を計算する.
 				inUkeFunctionProc = (void*) (vtable[index] );
 			}
 		#endif
-		
 		//フックされる関数の実領域を求める.
 		uintptr_t overraideFunctionAddr = 0;
 		if (*((unsigned char*)inUkeFunctionProc+0) == 0xe9)
@@ -530,7 +476,6 @@ private:
 			//即、プログラム領域に飛んでくる場合
 			overraideFunctionAddr = (uintptr_t)inUkeFunctionProc;
 		}
-
 		//仮想関数の vcallだった場合...
 		uintptr_t vcallFunctionAddr = this->CalcVCall(overraideFunctionAddr,inVCallThisPointer);
 		if (vcallFunctionAddr != 0)
@@ -539,8 +484,6 @@ private:
 		}
 		return overraideFunctionAddr;
 	}
-
-
 	//トランポリンフックの作成
 	int MakeTrampolineHookAsm(FUNCTIONHOOK_ASM* outBuffer , uintptr_t inUkeFunctionAddr, uintptr_t inSemeFunctionAddr) const
 	{
@@ -552,7 +495,6 @@ private:
 			// 0xe9 相対アドレス   = 5バイト の命令
 			*((unsigned char*)outBuffer+0) = 0xe9;	//近隣ジャンプ JMP
 			*((unsigned long*)((unsigned char*)outBuffer+1)) = (unsigned long) (inSemeFunctionAddr - inUkeFunctionAddr - 5);	//-5はjmp命令自信のサイズ
-
 			return 5;
 		}
 		else
@@ -564,29 +506,23 @@ private:
 			//http://www.ragestorm.net/blogs/?p=107
 			*((unsigned char*)outBuffer+0) = 0x68;	//push imm32, subs 8 from rsp
 			*((unsigned long*)((unsigned char*)outBuffer+1)) = 0x00000000ffffffff & inSemeFunctionAddr;
-
 			*((unsigned char*)outBuffer+5) = 0xc7;	//mov imm32, 4(%rsp)
 			*((unsigned char*)outBuffer+6) = 0x44;
 			*((unsigned char*)outBuffer+7) = 0x24;
 			*((unsigned char*)outBuffer+8) = 0x04;
 			*((unsigned long*)((unsigned char*)outBuffer+9)) = inSemeFunctionAddr >> 32;
-
 			*((unsigned char*)outBuffer+13) = 0xc3;	//ret
-
 			return 14;
 		}
 #else
 //#elif (_WIN32 || __i386__)
 		//i386
-
 		// 0xe9 相対アドレス   = 5バイト の命令
 		*((unsigned char*)outBuffer+0) = 0xe9;	//近隣ジャンプ JMP
 		*((unsigned long*)((unsigned char*)outBuffer+1)) = (unsigned long) (inSemeFunctionAddr - inUkeFunctionAddr - 5);	//-5はjmp命令自信のサイズ
-
 		return 5;
 #endif
 	}
-
 	//安全に上書きできるサイズを計算する.
 	int CalcSeparateOpecodeLength(uintptr_t inAddr , int orderriadeSize) const
 	{
@@ -604,16 +540,13 @@ private:
 		SEXYHOOK_ASSERT(len >= orderriadeSize);
 		return len;
 	}
-
 	void BackupFunction(void* inAddr , void* outOldSrc , int size)
 	{
 		//割り込むコードを書き込みます。
 		SEXYHOOK_ASSERT(outOldSrc != NULL);
-
 		//バックアップ
 		memcpy(outOldSrc , inAddr , size );
 	}
-
 	void OverraideFunction(void* inAddr , void* inNewSrc , int size)
 	{
 		#ifdef _WIN32
@@ -635,7 +568,6 @@ private:
 			//もとに戻したいんだけどどうすればいいの？
 		#endif
 	}
-
 	//マシン語の長さを求めます。
 	//http://www2.odn.ne.jp/~hab81760/modrm_sib.htm
 	//http://dl.dropbox.com/u/2476414/TechResources/x86_opcodemap_1_b4.pdf
@@ -677,7 +609,6 @@ private:
 /*e*/	0x02,	0x02,	0x02,	0x02,	0x02,	0x02,	0x02,	0x02,	0x05,	0x05,	0xf5,	0x02,	0xff,	0xff,	0xff,	0xff,//e
 /*f*/	0x01,	0x00,	0x01,	0x00,	0x01,	0x00,	0xfa,	0xfb,	0x01,	0x01,	0x01,	0x01,	0x01,	0x01,	0xff,	0xff //f
 		};
-
 		//f0から始まる 2バイト命令
 		static unsigned char codeTableF0[] = {
 //		0		1		2		3		4		5		6		7		8		9		a		b		c		d		e		f
@@ -698,33 +629,27 @@ private:
 /*e*/	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,//e
 /*f*/	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0xff,	0x00,	0x00 //f
 		};
-
 		unsigned char len = codeTable[*code];
 		unsigned char ex = 0;
 		unsigned char registersize = 0;
 		unsigned char registersize64 = 0;
-
 		if (cputype == SEXYHOOK_CPU_ARCHITECTURE_X64)
 		{//64bit対応 その1
 			if (*code == 0xf2 || *code == 0xf3)
 			{
 				code =	code + 1;
 				ex += 1;
-
 				len = codeTable[*code];
 			}
 		}
-
 		//prefix ぷよぷよだとダイアキュートみたいな
 		if (*code >= 0x64 && *code <= 0x67 )
 		{
 			registersize = *code;
-
 			code =	code + 1;
 			ex += 1;
 			len = codeTable[*code];
 		}
-
 		if (cputype == SEXYHOOK_CPU_ARCHITECTURE_X64)
 		{//64bit対応 その2
 			if ( registersize == 0x66 && *code == 0x2e)
@@ -732,17 +657,14 @@ private:
 				code =	code + 1;
 				ex += 1;
 			}
-
 			if (*code >= 0x40 && *code <= 0x4f )
 			{
 				registersize64 = *code;
-
 				code =	code + 1;
 				ex += 1;
 				len = codeTable[*code];
 			}
 		}
-
 		//lock prefix
 		if (*code == 0xf0)
 		{
@@ -750,8 +672,7 @@ private:
 			ex += 1;
 			len = codeTable[*code];
 		}
-
-		//9b は謎w 
+		//9b は謎w
 		if (*code == 0x9b)
 		{
 			if (*(code+1) == 0xdd)
@@ -775,7 +696,6 @@ private:
 				return ex + 1;
 			}
 		}
-
 		//2バイトの長いオペコードの処理
 		if (*code == 0x0f)
 		{
@@ -783,7 +703,6 @@ private:
 			ex += 1;
 			len = codeTableF0[*code];
 		}
-
 		//repne / reps は 次のコードを見ないとわからない
 		if (*code == 0xf2 || *code == 0xf3)
 		{
@@ -793,7 +712,6 @@ private:
 			}
 			return ex + 1;
 		}
-
 		if (len == 0)
 		{
 		}
@@ -822,7 +740,6 @@ private:
 			unsigned char reg = 0;
 			unsigned char rw =  0;
 			int modlen = modrmLen( *(code + 1) ,*(code + 2) ,&mod,&reg,&rw);
-
 			if ( len == 0xff)
 			{
 				return 1 + 1 + modlen + ex;
@@ -867,17 +784,14 @@ private:
 				else return 1 + 1 + ex;
 			}
 		}
-
 		SEXYHOOK_BREAKPOINT;
 		return 0;
 	}
-
-	static int modrmLen(unsigned char modrm,unsigned char sib,unsigned char *mod,unsigned char *reg,unsigned char *rw) 
+	static int modrmLen(unsigned char modrm,unsigned char sib,unsigned char *mod,unsigned char *reg,unsigned char *rw)
 	{
 		*mod = (modrm & 0xc0) >> 6;
 		*reg = (modrm & 0x38) >> 3;
 		*rw =  (modrm & 0x07);
-
 		switch (*mod)
 		{
 		case 0:
@@ -938,7 +852,5 @@ private:
 		SEXYHOOK_BREAKPOINT;
 		return 0;
 	}
-
 };
-
 #endif	// !____SEXYHOOK____72
