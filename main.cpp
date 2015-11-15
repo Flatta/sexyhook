@@ -5,9 +5,9 @@
 //
 //new BSD ライセンス / NYSLライセンス 好きに使えばいいんぢゃなイカ ^p^
 //
-#ifdef WIN32
+#ifdef _WIN32
 	#include <windows.h>
-#endif //WIN32
+#endif
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
@@ -556,7 +556,7 @@ int main()
 		SEXYHOOK_ASSERT(r == -10);
 	}
 
-#ifdef _WINDOWS_
+#ifdef _WIN32
 	//APIフックのテスト
 	{
 		//HeapCreate API を失敗させてみる。
@@ -667,7 +667,7 @@ int main()
 
 		FreeLibrary(mod);
 	}
-#endif //_WINDOWS_
+#endif	// _WIN32
 
 	//関数のフックのテスト
 	{
@@ -781,7 +781,7 @@ int main()
 		r = c2.add(10,20);	//フック
 		SEXYHOOK_ASSERT(r == -10);
 	}
-#endif	//__GNUC__
+#endif	// !__GNUC__
 
 /*
 	//private メソッドのアドレスを算出してフック. 

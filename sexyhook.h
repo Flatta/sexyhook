@@ -1,7 +1,7 @@
-#ifdef _MSC_VER 
-	//for VC++
+#ifdef _MSC_VER
 	#pragma once
 #endif
+
 #ifndef ____SEXYHOOK____72
 #define ____SEXYHOOK____72
 //
@@ -16,7 +16,7 @@
 //
 
 //includeとか定義とか.
-#ifdef _WINDOWS_
+#ifdef _WIN32
 	//windows
 	#include <windows.h>
 	#include <imagehlp.h>
@@ -322,7 +322,7 @@ public:
 		//先頭の保持
 		const char * apiHookDLLName = buffer + (int)(dll1 - inAddress + 1);
 		const char * apiHookFuncName = buffer + (int)(func1 - inAddress + 1);
-#ifdef _WINDOWS_
+#ifdef _WIN32
 		//DLL読み込み
 		HMODULE mod = LoadLibraryA(apiHookDLLName);
 		if ( mod == NULL )
@@ -362,7 +362,7 @@ public:
 		//APIをアンロードしなくてはいけない場合は開放する.
 		if(this->APIHookDLLHandle)
 		{
-#ifdef _WINDOWS_
+#ifdef _WIN32
 			FreeLibrary((HMODULE)this->APIHookDLLHandle);
 #endif
 			this->APIHookDLLHandle = NULL;
@@ -616,7 +616,7 @@ private:
 
 	void OverraideFunction(void* inAddr , void* inNewSrc , int size)
 	{
-		#ifdef _WINDOWS_
+		#ifdef _WIN32
 			//書き換え許可
 			unsigned long oldProtect = 0;
 			VirtualProtect( inAddr , size , PAGE_EXECUTE_READWRITE , &oldProtect);
@@ -941,4 +941,4 @@ private:
 
 };
 
-#endif //____SEXYHOOK____72
+#endif	// !____SEXYHOOK____72

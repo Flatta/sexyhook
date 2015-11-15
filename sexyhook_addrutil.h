@@ -1,7 +1,7 @@
-#ifdef WIN32
-	//for VC++
+#ifdef _MSC_VER
 	#pragma once
 #endif
+
 #ifndef ____SEXYHOOK_ADDRUTIL____72
 #define ____SEXYHOOK_ADDRUTIL____72
 //
@@ -13,19 +13,19 @@
 //
 //
 
-#ifdef WIN32
+#ifdef _WIN32
 	#include <windows.h>
 	#include <imagehlp.h>
-	#ifdef _MSC_VER 
-		#if _MSC_VER <= 1200 
-			typedef int intptr_t; 
-			typedef unsigned int uintptr_t; 
-		#endif 
-	#else 
+	#ifdef _MSC_VER
+		#if _MSC_VER <= 1200
+			typedef int intptr_t;
+			typedef unsigned int uintptr_t;
+		#endif
+	#else
 		#include <inttypes.h>
-	#endif 
-	#pragma comment(lib, "imagehlp.lib") 
-	#pragma comment(lib, "dbghelp.lib") 
+	#endif
+	#pragma comment(lib, "imagehlp.lib")
+	#pragma comment(lib, "dbghelp.lib")
 #else
 	#include <inttypes.h>
 	#include <sys/mman.h>
@@ -37,7 +37,7 @@ class SEXYHOOKAddrUtil
 {
 public:
 
-#ifdef WIN32
+#ifdef _WIN32
 	//éQçl :pdb2map.
 	static void* strstr_addr(const char * inFunctionName)
 	{
@@ -153,7 +153,7 @@ public:
 
 		return enumcallback.FoundAddress;
 	}
-#endif	// WIN32
+#endif	// _WIN32
 };
 
-#endif //____SEXYHOOK_ADDRUTIL____72
+#endif	// !____SEXYHOOK_ADDRUTIL____72
