@@ -74,6 +74,15 @@ template<typename _T> static void *SEXYHOOK_DARKCAST(int dummy, _T p) {
 		}
 #endif
 
+// インライン展開抑制
+#ifdef __GNUC__
+// gcc
+# define SEXYHOOK_NOINLINE __attribute__((noinline))
+#else
+// msvc
+# define SEXYHOOK_NOINLINE __declspec(noinline)
+#endif
+
 // 呼び出し規約
 #ifdef __GNUC__
 // gcc
